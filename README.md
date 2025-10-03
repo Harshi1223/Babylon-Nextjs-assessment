@@ -1,10 +1,13 @@
-Babylon-Nextjs-assessment
+<h1>Babylon-Nextjs-assessment</h1>
 
-📌 **Summary**
+<h2>📌Summary</h2>
+
 
 This is a simple Next.js application that provides login and registration features using Firebase Authentication. The project demonstrates user authentication flows, input validation, and basic navigation between login, registration, and home pages.
 
-🛠 **Tech Stack Used**
+
+
+<h2>🛠 Tech Stack Used</h2>
 
 OS: Windows 11
 
@@ -20,7 +23,10 @@ Styling: Tailwind CSS
 
 Backend / Authentication: Google Firebase
 
-✅ **Pre-Requisites**
+
+<h2>✅ Pre-Requisites</h2>
+
+
 
 To successfully run this project locally, you must have:
 
@@ -30,7 +36,11 @@ VS Code (or equivalent IDE) → Recommended for writing and managing source code
 
 Firebase Project → You need to create a Firebase project and configure authentication (Email/Password).
 
-🚀 **How to Run**
+
+
+
+<h2>🚀 How to Run</h2>
+
 
 Ensure Node.js and VS Code are installed.
 
@@ -42,31 +52,36 @@ cd Babylon-Nextjs-assessment
 
 Install dependencies:
 
-``` npm install node-modules ```
+    npm install node-modules
 
 
 Install Firebase SDK:
 
-```npm install firebase```
+    npm install firebase
 
 
 Run the application:
 
-```npm run dev```
+    npm run dev
 
 
 Open the app in your browser:
 
-```http://localhost:3000/```
+    http://localhost:3000/
 
-⚡ **Challenges Faced**
+<h2>⚡ Challenges Faced</h2>
+
+
 
 Environment Dependency & Security
 
 The application relies on sensitive Firebase configuration (API keys, project IDs). These must be correctly set via environment variables to avoid build/runtime errors.
 
 
-🚀 **Future Improvements**
+
+<h2>🚀 Future Improvements</h2>
+
+
 
 This project currently provides a working login and registration system using Next.js + Firebase Authentication.
 Potential future improvements include:
@@ -87,7 +102,8 @@ Store extended user details in Firestore.
 Track login activity (last login, device, etc.).
 
 
- 📷 **Snippets of the site:**
+ <h2>📷 Snippets of the site:</h2>
+
 
  <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/5af42c89-56f7-4f6f-9e1b-0a9088a40972" />
 

@@ -71,28 +71,34 @@ The application relies on sensitive Firebase configuration (API keys, project ID
 This project currently provides a working login and registration system using Next.js + Firebase Authentication.
 Potential future improvements include:
 
-🔹 Authentication & Security
-
-Persistent login (stay logged in after refresh).
 
 Role-based access control (admin vs user).
-
-Password reset functionality.
 
 Email verification before login.
 
 Two-Factor Authentication (2FA).
 
-🔹 User Experience (UX/UI)
-
-Modern UI with TailwindCSS / Material UI.
-
 Better validation.
 
 Responsive design for all devices.
 
-🔹 Data Handling
-
 Store extended user details in Firestore.
 
 Track login activity (last login, device, etc.).
+
+
+ 📷 **Snippets of the site:**
+
+ <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/5af42c89-56f7-4f6f-9e1b-0a9088a40972" />
+
+
+ <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/358bf2ec-e97c-4698-8a22-05af2917fccc" />
+
+
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/5c271ca2-abc2-4b69-aa1b-cdfca2177284" />
+
+
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/8d00faea-bbf6-4c82-b77f-07484320f761" />
+
+
+

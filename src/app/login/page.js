@@ -38,6 +38,14 @@ export default function LoginPage() {
     setError("");
     setIsSubmitting(true);
     setSuccessMessage(""); 
+    
+    // --- FIX: Client-side validation for missing fields ---
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      setIsSubmitting(false);
+      return;
+    }
+    // --------------------------------------------------------
 
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
@@ -56,6 +64,7 @@ export default function LoginPage() {
       } else if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
         setError("Incorrect email or password.");
       } else {
+        // This handles general errors including auth/missing-password if it somehow slipped through
         setError("Login failed. Check your credentials.");
         console.error("Firebase Login Error:", err.code);
       }

@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
-// Assuming you have a file named 'firebase.js' in the parent directory
+import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 
 export default function LoginPage() {
@@ -11,41 +10,43 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  // Effect to handle success message from registration query parameter
+  // ✅ Persistent login: redirect if already logged in
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/home");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  // ✅ Success message after registration
   useEffect(() => {
     if (searchParams.get("registered") === "true") {
       setSuccessMessage("Registered successfully! Please log in.");
-      // Clear the URL parameter
       router.replace(pathname, { shallow: true });
-      
-      const timer = setTimeout(() => {
-        setSuccessMessage("");
-      }, 5000);
-      
+      const timer = setTimeout(() => setSuccessMessage(""), 5000);
       return () => clearTimeout(timer);
     }
   }, [searchParams, router, pathname]);
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
-    setSuccessMessage(""); 
-    
-    // --- FIX: Client-side validation for missing fields ---
+    setSuccessMessage("");
+
     if (!email || !password) {
       setError("Please enter both email and password.");
       setIsSubmitting(false);
       return;
     }
-    // --------------------------------------------------------
 
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
@@ -58,16 +59,28 @@ export default function LoginPage() {
       router.push("/home");
     } catch (err) {
       setIsSubmitting(false);
-
       if (err.code === "auth/user-not-found") {
         setError("User not registered. Please sign up.");
       } else if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
         setError("Incorrect email or password.");
       } else {
-        // This handles general errors including auth/missing-password if it somehow slipped through
         setError("Login failed. Check your credentials.");
         console.error("Firebase Login Error:", err.code);
       }
+    }
+  };
+
+  // ✅ Password reset functionality
+  const handlePasswordReset = async () => {
+    if (!email || !email.includes("@")) {
+      setError("Enter a valid email to reset password.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSuccessMessage("Password reset email sent! Check your inbox or spam folder.");
+    } catch (err) {
+      setError("Failed to send reset email. Try again.");
     }
   };
 
@@ -78,32 +91,23 @@ export default function LoginPage() {
   return (
     <div style={{ maxWidth: 400, margin: "80px auto", padding: "0 20px" }}>
       
-      {/* Success Message Popup - Translucent Green Background */}
+      {/* Success Message */}
       {successMessage && (
         <div style={{ 
-          padding: 10, 
-          marginBottom: 15, 
-          backgroundColor: 'rgba(182, 237, 184, 0.9)', 
-          color: '#155724', 
-          border: '1px solid #c3e6cb', 
-          borderRadius: '8px', 
-          textAlign: 'center',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+          padding: 10, marginBottom: 15, backgroundColor: 'rgba(182, 237, 184, 0.9)', 
+          color: '#155724', border: '1px solid #c3e6cb', borderRadius: '8px', 
+          textAlign: 'center', boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
         }}>
           {successMessage}
         </div>
       )}
 
-      {/* Main Login Box - Glassmorphism Style */}
+      {/* Main Login Box */}
       <div style={{ 
-        padding: "30px", 
-        backgroundColor: 'rgba(255, 255, 255, 0.4)', // Translucent white (40% opacity)
-        borderRadius: '16px', 
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
-        backdropFilter: 'blur(10px)', // The glass effect
-        border: '1px solid rgba(255, 255, 255, 0.5)', // Light border
-        color: '#171717', // Dark text
-        textAlign: 'center'
+        padding: "30px", backgroundColor: 'rgba(255, 255, 255, 0.4)', 
+        borderRadius: '16px', boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.5)', 
+        color: '#171717', textAlign: 'center'
       }}>
         <h1 style={{fontSize: '28px', marginBottom: '20px', color: '#B04B76'}}>Login</h1>
         
@@ -113,84 +117,43 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ 
-              width: "100%", 
-              padding: "12px", 
-              marginBottom: 15, 
-              border: "1px solid rgba(0, 0, 0, 0.2)", 
-              borderRadius: "8px", 
-              boxSizing: "border-box",
-              backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              outline: 'none',
-              color: '#171717',
-            }}
+            style={{ width: "100%", padding: "12px", marginBottom: 15, border: "1px solid rgba(0, 0, 0, 0.2)", borderRadius: "8px", boxSizing: "border-box", backgroundColor: 'rgba(255, 255, 255, 0.7)', outline: 'none', color: '#171717' }}
             disabled={isSubmitting}
           />
 
           <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", textAlign: 'left' }}>Password</label>
           <div style={{ position: 'relative', marginBottom: '20px' }}>
             <input
-              type={showPassword ? "text" : "password"} // Dynamic input type
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ 
-                width: "100%", 
-                padding: "12px", 
-                paddingRight: '40px', // Make space for the button
-                border: "1px solid rgba(0, 0, 0, 0.2)", 
-                borderRadius: "8px", 
-                boxSizing: "border-box",
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                outline: 'none',
-                color: '#171717',
-              }}
+              style={{ width: "100%", padding: "12px", paddingRight: '40px', border: "1px solid rgba(0, 0, 0, 0.2)", borderRadius: "8px", boxSizing: "border-box", backgroundColor: 'rgba(255, 255, 255, 0.7)', outline: 'none', color: '#171717' }}
               disabled={isSubmitting}
             />
-             <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              style={{
-                position: 'absolute',
-                right: '5px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#B04B76',
-                padding: '5px',
-                fontSize: '14px',
-                fontWeight: '600'
-              }}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
+            <button type="button" onClick={togglePasswordVisibility}
+              style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#B04B76', padding: '5px', fontSize: '14px', fontWeight: '600' }}>
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
 
           {error && <p style={{ color: "#d9534f", marginBottom: 15, textAlign: 'center' }}>{error}</p>}
 
-          <button 
-            type="submit" 
-            style={{ 
-              width: "100%", 
-              padding: 14, 
-              backgroundColor: "#E67D9C", // Pink button color
-              color: "white", 
-              border: "none", 
-              borderRadius: "8px", 
-              cursor: isSubmitting ? "not-allowed" : "pointer", 
-              opacity: isSubmitting ? 0.8 : 1, 
-              fontWeight: "bold",
-              transition: 'background-color 0.2s'
-            }}
+          <button type="submit"
+            style={{ width: "100%", padding: 14, backgroundColor: "#E67D9C", color: "white", border: "none", borderRadius: "8px", cursor: isSubmitting ? "not-allowed" : "pointer", opacity: isSubmitting ? 0.8 : 1, fontWeight: "bold", transition: 'background-color 0.2s' }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#D45A7C'}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#E67D9C'}
-            disabled={isSubmitting}
-          >
+            disabled={isSubmitting}>
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        {/* ✅ Forgot Password Link */}
+        <p style={{ marginTop: 15, textAlign: "center", color: '#555' }}>
+          <span style={{ color: "#B04B76", cursor: "pointer", fontWeight: "bold" }}
+            onClick={handlePasswordReset}>
+            Forgot Password?
+          </span>
+        </p>
 
         <p style={{ marginTop: 20, textAlign: "center", color: '#555' }}>
           Not a member?{" "}

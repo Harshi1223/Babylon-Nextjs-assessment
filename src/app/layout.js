@@ -1,15 +1,16 @@
-"use client";
+import "./globals.css";
+import { AuthProvider } from "./AuthContext";
 
-import './globals.css';
+export const metadata = {
+  title: "Babylon-Nextjs-assessment",
+  description: "Login/Register with Firebase",
+};
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <title>Login App</title>
-      </head>
+    <html lang="en">
       <body>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

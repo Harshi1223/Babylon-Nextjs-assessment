@@ -4,7 +4,7 @@
 
 It is a simple Next.js app with a login/register feature using Firebase Authentication.
 
-**Tech stack used: **
+**Tech stack used:**
 
 OS: Windows 11
 

@@ -42,22 +42,22 @@ cd Babylon-Nextjs-assessment
 
 Install dependencies:
 
-npm install node-modules
+``` npm install node-modules ```
 
 
 Install Firebase SDK:
 
-npm install firebase
+```npm install firebase```
 
 
 Run the application:
 
-npm run dev
+```npm run dev```
 
 
 Open the app in your browser:
 
-http://localhost:3000/
+```http://localhost:3000/```
 
 ⚡ **Challenges Faced**
 
@@ -65,9 +65,6 @@ Environment Dependency & Security
 
 The application relies on sensitive Firebase configuration (API keys, project IDs). These must be correctly set via environment variables to avoid build/runtime errors.
 
-Single-File Complexity (Monolith)
-
-For demonstration, login, register, and home components are kept close together. In real-world projects, code should be modularized for maintainability.
 
 🚀 **Future Improvements**
 
@@ -90,7 +87,7 @@ Two-Factor Authentication (2FA).
 
 Modern UI with TailwindCSS / Material UI.
 
-Better validation with React Hook Form / Formik.
+Better validation.
 
 Responsive design for all devices.
 
